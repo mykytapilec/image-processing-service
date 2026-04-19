@@ -12,6 +12,9 @@ model Image {
   filename  String
   mimetype  String
   size      Int
+  width     Int?
+  height    Int?
+  format    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
