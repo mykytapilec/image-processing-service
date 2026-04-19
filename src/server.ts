@@ -7,9 +7,10 @@ import {
 import { FileStorageService } from './storage/storage.service.js';
 
 const storage = new FileStorageService();
-const app = createApp();
 
 async function start() {
+  const app = await createApp();
+
   try {
     await connectDatabase();
     await storage.initialize();
