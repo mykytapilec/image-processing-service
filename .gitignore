@@ -9,3 +9,6 @@ coverage
 .vscode
 .idea
 /src/generated/prisma
+
+storage/*
+!storage/.gitkeep
