@@ -9,6 +9,8 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
 
   DATABASE_URL: z.string().min(1),
+
+  STORAGE_PATH: z.string().default('./storage'),
 });
 
 export const env = envSchema.parse(process.env);
