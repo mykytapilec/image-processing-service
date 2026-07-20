@@ -1,7 +1,10 @@
 import { prisma } from '../database/prisma.js';
 import { ImageProcessingService } from '../processing/image-processing.service.js';
 import { FileStorageService } from '../storage/storage.service.js';
-import type { UploadedImage } from './image.types.js';
+import type {
+  ImageFile,
+  UploadedImage,
+} from './image.types.js';
 
 interface SaveImageInput {
   filename: string;
@@ -54,6 +57,36 @@ export class ImageService {
       filename: image.filename,
       mimetype: image.mimetype,
       size: image.size,
+    };
+  }
+
+  async getById(id: string): Promise<ImageFile | null> {
+    const image = await prisma.image.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!image) {
+      return null;
+    }
+
+    const exists = await this.storage.exists(
+      image.filename,
+    );
+
+    if (!exists) {
+      return null;
+    }
+
+    const buffer = await this.storage.read(
+      image.filename,
+    );
+
+    return {
+      filename: image.filename,
+      mimetype: image.mimetype,
+      buffer,
     };
   }
 }

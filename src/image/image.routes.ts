@@ -1,8 +1,8 @@
 import type { FastifyPluginAsync } from 'fastify';
 
-import { ImageService } from './image.service.js';
-import { FileStorageService } from '../storage/storage.service.js';
 import { ImageProcessingService } from '../processing/image-processing.service.js';
+import { FileStorageService } from '../storage/storage.service.js';
+import { ImageService } from './image.service.js';
 
 const imageRoutes: FastifyPluginAsync = async (app) => {
   const imageService = new ImageService(
@@ -27,6 +27,24 @@ const imageRoutes: FastifyPluginAsync = async (app) => {
       size: buffer.length,
       buffer,
     });
+  });
+
+  app.get('/images/:id', async (request, reply) => {
+    const { id } = request.params as {
+      id: string;
+    };
+
+    const image = await imageService.getById(id);
+
+    if (!image) {
+      return reply.status(404).send({
+        error: 'Image not found',
+      });
+    }
+
+    return reply
+      .type(image.mimetype)
+      .send(image.buffer);
   });
 };
 

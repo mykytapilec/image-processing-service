@@ -4,3 +4,9 @@ export interface UploadedImage {
   mimetype: string;
   size: number;
 }
+
+export interface ImageFile {
+  filename: string;
+  mimetype: string;
+  buffer: Buffer;
+}

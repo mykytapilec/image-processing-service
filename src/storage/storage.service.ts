@@ -1,8 +1,17 @@
-import { mkdir, writeFile, unlink, access } from 'node:fs/promises';
+import {
+  mkdir,
+  writeFile,
+  unlink,
+  access,
+  readFile,
+} from 'node:fs/promises';
 import path from 'node:path';
 
 import { env } from '../config/env.js';
-import type { SaveFileInput, StorageService } from './storage.types.js';
+import type {
+  SaveFileInput,
+  StorageService,
+} from './storage.types.js';
 
 export class FileStorageService implements StorageService {
   private readonly storagePath: string;
@@ -25,6 +34,10 @@ export class FileStorageService implements StorageService {
     await writeFile(filePath, input.buffer);
 
     return filePath;
+  }
+
+  async read(filename: string): Promise<Buffer> {
+    return readFile(this.getPath(filename));
   }
 
   async delete(filename: string): Promise<void> {
