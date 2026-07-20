@@ -26,6 +26,18 @@ export class ImageService {
       buffer: input.buffer,
     });
 
+    const thumbnail = await this.processing.resize({
+      buffer: input.buffer,
+      width: 300,
+    });
+
+    const thumbnailFilename = `thumb-${input.filename}`;
+
+    await this.storage.save({
+      filename: thumbnailFilename,
+      buffer: thumbnail.buffer,
+    });
+
     const image = await prisma.image.create({
       data: {
         filename: input.filename,
