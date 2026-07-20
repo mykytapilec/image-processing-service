@@ -1,6 +1,10 @@
 import sharp from 'sharp';
 
-import type { ImageMetadata } from './image-processing.types.js';
+import type {
+  ImageMetadata,
+  ResizeImageInput,
+  ResizeImageResult,
+} from './image-processing.types.js';
 
 export class ImageProcessingService {
   async getMetadata(
@@ -12,6 +16,21 @@ export class ImageProcessingService {
       width: metadata.width ?? 0,
       height: metadata.height ?? 0,
       format: metadata.format ?? 'unknown',
+    };
+  }
+
+  async resize(
+    input: ResizeImageInput,
+  ): Promise<ResizeImageResult> {
+    const resizedBuffer = await sharp(input.buffer)
+      .resize({
+        width: input.width,
+        height: input.height,
+      })
+      .toBuffer();
+
+    return {
+      buffer: resizedBuffer,
     };
   }
 }
