@@ -2,7 +2,7 @@ import { prisma } from '../database/prisma.js';
 import { ImageProcessingService } from '../processing/image-processing.service.js';
 import { FileStorageService } from '../storage/storage.service.js';
 import type {
-  ImageFile,
+  ImageListItem,
   UploadedImage,
 } from './image.types.js';
 
@@ -60,7 +60,7 @@ export class ImageService {
     };
   }
 
-  async getById(id: string): Promise<ImageFile | null> {
+  async getById(id: string) {
     const image = await prisma.image.findUnique({
       where: {
         id,
@@ -71,22 +71,39 @@ export class ImageService {
       return null;
     }
 
-    const exists = await this.storage.exists(
-      image.filename,
-    );
-
-    if (!exists) {
-      return null;
-    }
-
     const buffer = await this.storage.read(
       image.filename,
     );
 
     return {
+      id: image.id,
       filename: image.filename,
       mimetype: image.mimetype,
+      size: image.size,
+      width: image.width,
+      height: image.height,
+      format: image.format,
+      createdAt: image.createdAt,
       buffer,
     };
+  }
+
+  async findAll(): Promise<ImageListItem[]> {
+    const images = await prisma.image.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return images.map((image) => ({
+      id: image.id,
+      filename: image.filename,
+      mimetype: image.mimetype,
+      size: image.size,
+      width: image.width,
+      height: image.height,
+      format: image.format,
+      createdAt: image.createdAt,
+    }));
   }
 }

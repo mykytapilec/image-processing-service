@@ -29,6 +29,10 @@ const imageRoutes: FastifyPluginAsync = async (app) => {
     });
   });
 
+  app.get('/images', async () => {
+    return imageService.findAll();
+  });
+
   app.get('/images/:id', async (request, reply) => {
     const { id } = request.params as {
       id: string;
