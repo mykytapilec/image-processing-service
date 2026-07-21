@@ -106,4 +106,27 @@ export class ImageService {
       createdAt: image.createdAt,
     }));
   }
+
+  async delete(id: string): Promise<boolean> {
+    const image = await prisma.image.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!image) {
+      return false;
+    }
+
+    await this.storage.delete(image.filename);
+    await this.storage.delete(`thumb-${image.filename}`);
+
+    await prisma.image.delete({
+      where: {
+        id,
+      },
+    });
+
+    return true;
+  }
 }

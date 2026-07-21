@@ -50,6 +50,22 @@ const imageRoutes: FastifyPluginAsync = async (app) => {
       .type(image.mimetype)
       .send(image.buffer);
   });
+
+  app.delete('/images/:id', async (request, reply) => {
+    const { id } = request.params as {
+      id: string;
+    };
+
+    const deleted = await imageService.delete(id);
+
+    if (!deleted) {
+      return reply.status(404).send({
+        error: 'Image not found',
+      });
+    }
+
+    return reply.status(204).send();
+  });
 };
 
 export default imageRoutes;
